@@ -1,0 +1,4 @@
+#!/bin/sh
+
+COMMAND="php $*"
+docker exec -i --user=1000:1000 php-fpm sh -c "$COMMAND"
