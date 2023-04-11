@@ -1,3 +1,4 @@
 #!/bin/sh
 
-docker exec php-fpm composer install
+PHP_CONTAINER_NAME=bar-php-fpm
+docker exec $PHP_CONTAINER_NAME composer install
