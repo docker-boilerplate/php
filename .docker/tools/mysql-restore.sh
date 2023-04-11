@@ -1,7 +1,7 @@
 #!/bin/sh
 # Read db options in docker.env and restore sql db dump into default database or passed in the options
 
-ERR_DOCKER_ENV_NOT_FOUND="Docker environment file is not found: git repository structure is corrupted."
+ERR_DOCKER_ENV_NOT_FOUND="Docker environment file is not found."
 DOCKER_ENV_FILE="../.docker/.env"
 
 [ ! -f  "$DOCKER_ENV_FILE" ] && echo "$ERR_DOCKER_ENV_NOT_FOUND" && exit 1
@@ -67,17 +67,18 @@ Are you sure to continue? (Write 'y' or 'yes')"
   [ "$ANSWER" != 'yes' ] && [ "$ANSWER" != 'y' ]  && exit 0;
 fi
 
+MYSQL_CONTAINER_NAME=bar-mysql
 echo "Start to restore $DUMP into $DATABASE:"
 
 CREATE_DB="CREATE DATABASE IF NOT EXISTS $DATABASE;"
-docker exec -i mysql sh -c "exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -e \"$CREATE_DB\"" 
+docker exec -i $MYSQL_CONTAINER_NAME sh -c "exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -e \"$CREATE_DB\""
 
 GRANT_USER_TO_DB="GRANT ALL ON \\\`$DATABASE\\\`.* TO \\\`$MYSQL_USER\\\`@\\\`%\\\` ;"
-docker exec -i mysql sh -c "exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -e \"$GRANT_USER_TO_DB\"" 
+docker exec -i $MYSQL_CONTAINER_NAME sh -c "exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -e \"$GRANT_USER_TO_DB\""
 
 if (dpkg -s pv | grep -q Status) >/dev/null 2>&1
   then
-    pv -pert "$DUMP" | docker exec -i mysql sh -c "exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" $DATABASE"
+    pv -pert "$DUMP" | docker exec -i $MYSQL_CONTAINER_NAME sh -c "exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" $DATABASE"
   else
-    docker exec -i mysql sh -c "exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" $DATABASE" < "$DUMP"
+    docker exec -i $MYSQL_CONTAINER_NAME sh -c "exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" $DATABASE" < "$DUMP"
 fi
