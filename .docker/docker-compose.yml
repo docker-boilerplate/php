@@ -23,6 +23,7 @@ services:
         PHP_VERSION: ${PHP_VERSION?}
         COMPOSER_VERSION: ${COMPOSER_VERSION?}
         XDEBUG_IDE_KEY: ${XDEBUG_IDE_KEY}
+        APP_CODE_PATH_CONTAINER: ${APP_CODE_PATH_CONTAINER?}
     container_name: ${COMPOSE_PROJECT_NAME}-php-fpm
     volumes:
       - ${APP_CODE_PATH_HOST?}:${APP_CODE_PATH_CONTAINER?}
@@ -40,6 +41,7 @@ services:
       dockerfile: images/nginx/Dockerfile
       args:
         NGINX_VERSION: ${NGINX_VERSION?}
+        APP_CODE_PATH_CONTAINER: ${APP_CODE_PATH_CONTAINER?}
     container_name: ${COMPOSE_PROJECT_NAME}-nginx
     volumes:
       - ${APP_CODE_PATH_HOST?}:${APP_CODE_PATH_CONTAINER?}
@@ -59,7 +61,7 @@ services:
 #    build:
 #      dockerfile: ./images/httpd/Dockerfile
 #      args:
-#        APP_CODE_PATH: ${APP_CODE_PATH_CONTAINER?}
+#        APP_CODE_PATH_CONTAINER: ${APP_CODE_PATH_CONTAINER?}
 #        APP_HOST: ${APP_HOST}
 #        HTTPD_HOST_HTTP_PORT: ${HTTPD_HOST_HTTP_PORT}
 #        HTTPD_VERSION: ${HTTPD_VERSION}
