@@ -5,10 +5,12 @@ networks:
    name: ${COMPOSE_PROJECT_NAME}-docker
 
 volumes:
-  mysql:
-    name:  ${COMPOSE_PROJECT_NAME}-mysql-${ENV?}
-  elasticsearch-data:
-    name:  ${COMPOSE_PROJECT_NAME}-elasticsearch-data-${ENV?}
+#  mysql:
+#    name:  ${COMPOSE_PROJECT_NAME}-mysql-${ENV?}
+#  elasticsearch-data:
+#    name:  ${COMPOSE_PROJECT_NAME}-elasticsearch-data-${ENV?}
+  mariadbsql:
+    name: ${COMPOSE_PROJECT_NAME}-mariadb-${ENV?}
 
 services:
 #
@@ -102,7 +104,29 @@ services:
 #      - "${MYSQL_HOST_PORT:-3306}:3306"
 #    restart: ${RESTART:-no}
 
-#
+
+#  MariaDB server
+
+  mariadb:
+    image: mariadb:${MARIADB_VERSION?}
+    container_name: ${COMPOSE_PROJECT_NAME}-mariadb
+    command: --innodb_file_per_table=1
+    platform: linux/amd64
+    environment:
+      - MYSQL_DATABASE=${MYSQL_DATABASE?}
+      - MARIADB_USER=${MYSQL_USER?}
+      - MARIADB_PASSWORD=${MYSQL_PASSWORD?}
+      - MARIADB_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD?}
+      - TZ=${TIMEZONE:-UTC}
+    volumes:
+      - mariadbsql:/var/lib/mysql
+    networks:
+      - network
+    ports:
+      - "${MARIADB_HOST_PORT:-3306}:3306"
+    restart: ${RESTART:-no}
+
+
 #  PhpMyAdmin - MySQL database admin
 #
 #  phpmyadmin:
