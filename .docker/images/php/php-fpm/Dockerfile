@@ -6,19 +6,20 @@ FROM php:${PHP_VERSION}
 ARG GROUP_ID_HOST
 ARG USER_ID_HOST
 ARG XDEBUG_IDE_KEY
+ARG XDEBUG_VERSION
 
 RUN apt update
 
 # xdebug
-RUN pecl install xdebug \
+RUN pecl install xdebug$XDEBUG_VERSION \
     && docker-php-ext-enable xdebug
 COPY ./images/php/php-fpm/conf.d/xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
 RUN sed -i "s;__IDE_KEY;$XDEBUG_IDE_KEY;" $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
 
 ## mysqli extension
-#RUN docker-php-ext-install mysqli \
-#    && docker-php-ext-enable mysqli
-#
+RUN docker-php-ext-install mysqli \
+    && docker-php-ext-enable mysqli
+
 ## pdo extension
 #RUN docker-php-ext-install pdo pdo_mysql
 #
