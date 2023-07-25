@@ -67,18 +67,18 @@ Are you sure to continue? (Write 'y' or 'yes')"
   [ "$ANSWER" != 'yes' ] && [ "$ANSWER" != 'y' ]  && exit 0;
 fi
 
-MYSQL_CONTAINER_NAME=bar-mysql
+MARIADB_CONTAINER_NAME=foo-mariadb
 echo "Start to restore $DUMP into $DATABASE:"
 
 CREATE_DB="CREATE DATABASE IF NOT EXISTS $DATABASE;"
-docker exec -i $MYSQL_CONTAINER_NAME sh -c "exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -e \"$CREATE_DB\""
+docker exec -i $MARIADB_CONTAINER_NAME sh -c "exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -e \"$CREATE_DB\""
 
 GRANT_USER_TO_DB="GRANT ALL ON \\\`$DATABASE\\\`.* TO \\\`$MYSQL_USER\\\`@\\\`%\\\` ;"
-docker exec -i $MYSQL_CONTAINER_NAME sh -c "exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -e \"$GRANT_USER_TO_DB\""
+docker exec -i $MARIADB_CONTAINER_NAME sh -c "exec mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" -e \"$GRANT_USER_TO_DB\""
 
 if (dpkg -s pv | grep -q Status) >/dev/null 2>&1
   then
-    pv -pert "$DUMP" | docker exec -i $MYSQL_CONTAINER_NAME sh -c "exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" $DATABASE"
+    pv -pert "$DUMP" | docker exec -i $MARIADB_CONTAINER_NAME sh -c "exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" $DATABASE"
   else
-    docker exec -i $MYSQL_CONTAINER_NAME sh -c "exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" $DATABASE" < "$DUMP"
+    docker exec -i $MARIADB_CONTAINER_NAME sh -c "exec mysql -uroot -p\"$MYSQL_ROOT_PASSWORD\" $DATABASE" < "$DUMP"
 fi

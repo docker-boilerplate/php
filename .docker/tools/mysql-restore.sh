@@ -67,7 +67,7 @@ Are you sure to continue? (Write 'y' or 'yes')"
   [ "$ANSWER" != 'yes' ] && [ "$ANSWER" != 'y' ]  && exit 0;
 fi
 
-MYSQL_CONTAINER_NAME=bar-mysql
+MARIADB_CONTAINER_NAME=foo-mariadb
 echo "Start to restore $DUMP into $DATABASE:"
 
 CREATE_DB="CREATE DATABASE IF NOT EXISTS $DATABASE;"
