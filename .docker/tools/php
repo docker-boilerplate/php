@@ -1,5 +1,5 @@
 #!/bin/sh
 
 COMMAND="php $*"
-PHP_CONTAINER_NAME=bar-php-fpm
+PHP_CONTAINER_NAME=foo-php-fpm
 docker exec -i --user=1000:1000 $PHP_CONTAINER_NAME sh -c "$COMMAND"
